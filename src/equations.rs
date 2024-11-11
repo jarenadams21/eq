@@ -41,3 +41,47 @@ fn calculate_probe_phase_shift_2(num_excited_atoms: f64, probe_detuning: f64) ->
 
     delta_phase
 }
+
+
+
+impl bbQuantumState {
+    // Function to create a new QuantumState from given values
+    pub fn new(head: f64, tail: f64) -> Self {
+        QuantumState { head, tail }
+    }
+
+    // Function to simulate state transition
+    pub fn transition(&self, delta: f64) -> Self {
+        // Simulate state transition using a simple model
+        QuantumState {
+            head: self.head * delta.cos() - self.tail * delta.sin(),
+            tail: self.head * delta.sin() + self.tail * delta.cos(),
+        }
+    }
+
+    // Function to compute the amplitude (e.g., magnitude of the complex number)
+    pub fn amplitude(&self) -> f64 {
+        (self.head.powi(2) + self.tail.powi(2)).sqrt()
+    }
+}
+
+use std::f64::consts::PI;
+use std::f64::consts::SQRT_2; // Square root of 2
+use std::f64::consts::E; // Euler's number
+
+// Golden ratio
+pub const GOLDEN_RATIO: f64 = 1.618033988749895;
+
+impl bbbQuantumState {
+    // Function to simulate state transition
+    pub fn transition(&self, delta: f64) -> Self {
+        // Use irrational numbers to introduce complex rotations
+        let phi_rotation = (delta * GOLDEN_RATIO).sin_cos();
+        let euler_rotation = (delta * E).sin_cos();
+
+        QuantumState {
+            head: self.head * phi_rotation.0 - self.tail * euler_rotation.1,
+            tail: self.head * euler_rotation.0 + self.tail * phi_rotation.1,
+        }
+    }
+}

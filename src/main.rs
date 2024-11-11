@@ -1,4 +1,5 @@
 // main.rs
+// NOTE: Deprecated, Needs to be Upgraded means it requires extensive proofreading and careful addition into the current system
 
 use std::f64::consts::PI;
 use plotters::prelude::*; // For plotting
@@ -6,7 +7,7 @@ use log::{info, error};
 use env_logger::Env;
 
 // Import structs, constants, and functions from lib.rs
-use funhalf::{
+use funhalf::{ // Replace with your actual crate name
     SimulationParams, compute_current, load_quantum_states, QuantumState,
 };
 
@@ -16,21 +17,24 @@ fn main() {
 
     // Define simulation parameters
     let params = SimulationParams {
-        U: 2.0e-3,             // Charging energy (eV)
-        epsilon_0: 3.0e-3,     // Inter-shell spacing (eV)
-        temperature: 0.5,      // Temperature (K)
-        eta: 0.55,             // Bias asymmetry
-        gamma_l: 0.3556e-6,    // Tunneling rate at left lead (eV)
-        gamma_r: 0.0444e-6,    // Tunneling rate at right lead (eV)
-        delta_phi: PI / 2.0,   // Phase difference (radians)
+        U: 1.0e-3,             // Charging energy (eV)
+        epsilon_0: 1.0e-3,     // Inter-shell spacing (eV)
+        eta: 0.55,              // Bias asymmetry
+        gamma_l: 0.1e-3,       // Tunneling rate at left lead (eV)
+        gamma_r: 12.8e-3,       // Tunneling rate at right lead (eV)
+        delta_phi: PI / 4.0,   // Phase difference (radians)
         gamma_rel: 0.0,        // Relaxation rate (eV)
-        J: 0.01e-3,            // Exchange interaction (eV)
-        bias_voltage_range: (-5e-3, 5e-3), // Bias voltage range (V)
-        gate_voltage_range: (-20e-3, 20e-3), // Gate voltage range (V)
-        bias_steps: 200,       // Number of bias voltage steps
-        gate_steps: 200,       // Number of gate voltage steps
-        quantum_states_file: "valid_carbon_readings.csv".to_string(), // Path to CSV file
+        pressure: 101325.0,    // Pressure (Pa)
+        volume: 100.0,           // Volume (m³)
+        temperature: 0.1,      // Temperature (K)
+        quantum_states_file: "valid_carbon_readings.csv".to_string(),
     };
+
+    // Simulation parameters not included in SimulationParams struct
+    let bias_voltage_range = (-500e-3, 500e-3);   // Bias voltage range (V)
+    let gate_voltage_range = (-2000e-3, 2000e-3); // Gate voltage range (V)
+    let bias_steps = 200;                     // Number of bias voltage steps
+    let gate_steps = 200;                     // Number of gate voltage steps
 
     // Log the start of the simulation
     info!("Starting simulation with parameters: {:?}", params);
@@ -48,31 +52,39 @@ fn main() {
     };
 
     // Run the simulation
-    match run_simulation(params, &quantum_states) {
+    match run_simulation(
+        params,
+        &quantum_states,
+        bias_voltage_range,
+        gate_voltage_range,
+        bias_steps,
+        gate_steps,
+    ) {
         Ok(_) => info!("Simulation completed successfully."),
         Err(e) => error!("Simulation failed: {:?}", e),
     }
 }
 
 // Function to run the simulation
-fn run_simulation(params: SimulationParams, quantum_states: &[QuantumState]) -> Result<(), Box<dyn std::error::Error>> {
-    // Unpack parameters
-    let bias_voltage_range = params.bias_voltage_range;
-    let gate_voltage_range = params.gate_voltage_range;
-    let bias_steps = params.bias_steps;
-    let gate_steps = params.gate_steps;
-
+fn run_simulation(
+    params: SimulationParams,
+    quantum_states: &[QuantumState],
+    bias_voltage_range: (f64, f64),
+    gate_voltage_range: (f64, f64),
+    bias_steps: usize,
+    gate_steps: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
     // Generate bias voltage and gate voltage vectors
-    let bias_voltages: Vec<f64> = (0..bias_steps)
+    let bias_voltages: Vec<f64> = (0..=bias_steps)
         .map(|i| bias_voltage_range.0 + i as f64 * (bias_voltage_range.1 - bias_voltage_range.0) / (bias_steps as f64))
         .collect();
 
-    let gate_voltages: Vec<f64> = (0..gate_steps)
+    let gate_voltages: Vec<f64> = (0..=gate_steps)
         .map(|i| gate_voltage_range.0 + i as f64 * (gate_voltage_range.1 - gate_voltage_range.0) / (gate_steps as f64))
         .collect();
 
     // Initialize a 2D vector for currents
-    let mut currents: Vec<Vec<f64>> = Vec::with_capacity(gate_steps);
+    let mut currents: Vec<Vec<f64>> = Vec::with_capacity(gate_voltages.len());
 
     for &V_g in &gate_voltages {
         let current_row: Vec<f64> = bias_voltages
@@ -116,9 +128,14 @@ fn run_simulation(params: SimulationParams, quantum_states: &[QuantumState]) -> 
         })
         .collect();
 
+    // Normalize current values for color mapping
+    let max_current = data.iter().map(|&(_, _, z)| z).fold(f64::MIN, f64::max);
+    let min_current = data.iter().map(|&(_, _, z)| z).fold(f64::MAX, f64::min);
+
     chart.draw_series(
         data.iter().map(|&(x, y, z)| {
-            Circle::new((x, y), 2, RGBColor(0, (z * 1e9) as u8, 0).filled())
+            let intensity = ((z - min_current) / (max_current - min_current) * 255.0) as u8;
+            Circle::new((x, y), 2, RGBColor(intensity, 0, 255 - intensity).filled())
         }),
     )?;
 

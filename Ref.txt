@@ -1,0 +1,8 @@
+	•	Quantum Chaos and Riemann Zeta Function:
+	•	Berry, M. V., & Keating, J. P. (1999). The Riemann zeros and eigenvalue asymptotics. SIAM Review, 41(2), 236–266.
+	•	Connes, A. (1999). Trace formula in noncommutative geometry and the zeros of the Riemann zeta function. Selecta Mathematica, 5(1), 29–106.
+	•	Fine-Structure Constant and QED:
+	•	Peskin, M. E., & Schroeder, D. V. (1995). An Introduction to Quantum Field Theory. Addison-Wesley.
+	•	Dyson, F. J. (1988). The fine structure constant. Physics Today, 41(9), 140–143.
+	•	Ideal Gas Law and Thermodynamics:
+	•	Atkins, P., & de Paula, J. (2010). Atkins’ Physical Chemistry (9th ed.). Oxford University Press.

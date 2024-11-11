@@ -7,3 +7,8 @@
 // 4. Setup more sophiscated bench with, Q-dots, Q-wires, and Q-wells
 // 5. Review the Satyendra-Bose Condensate
 // 6. Carbon nanotude dark state results
+
+
+// October 31, 2024
+// Happy Halloweenie:D
+// Shoutout the Js I guess
