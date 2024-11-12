@@ -86,7 +86,7 @@ impl QuantumState {
 
         let energy_scale = 1.0e-3; // Scale factor to convert zeta zeros to eV
         let scaled_zeta_zero = self.zeta_zero * energy_scale;  
-        let phase_shift = delta_adjusted * scaled_zeta_zero;
+        let phase_shift = delta_adjusted; // * scaled_zeta_zero;
 
         // Update the state by rotating it in the complex plane
         let rotation = Complex64::from_polar(1.0, phase_shift);

@@ -20,13 +20,13 @@ fn main() {
         U: 1.0e-3,             // Charging energy (eV)
         epsilon_0: 1.0e-3,     // Inter-shell spacing (eV)
         eta: 0.55,              // Bias asymmetry
-        gamma_l: 0.1e-3,       // Tunneling rate at left lead (eV)
-        gamma_r: 12.8e-3,       // Tunneling rate at right lead (eV)
+        gamma_l: 3.1e-3,       // Tunneling rate at left lead (eV)
+        gamma_r: 3.3e-3,       // Tunneling rate at right lead (eV)
         delta_phi: PI / 4.0,   // Phase difference (radians)
         gamma_rel: 0.0,        // Relaxation rate (eV)
-        pressure: 101325.0,    // Pressure (Pa)
-        volume: 100.0,           // Volume (m³)
-        temperature: 0.1,      // Temperature (K)
+        pressure: 1.0,    // Pressure (Pa)
+        volume: 1.0,           // Volume (m³)
+        temperature: 2.7,      // Temperature (K)
         quantum_states_file: "valid_carbon_readings.csv".to_string(),
     };
 
